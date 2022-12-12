@@ -245,16 +245,32 @@ export default class GraphEntry {
       );
 
       // if data in cache, get data from last data's time + 1ms
-      const fetchStart = usableCache
+      let fetchStart = usableCache
         ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           new Date(history!.data[history!.data.length - 1][0] + 1)
-        : new Date(startHistory.getTime() + (this._config.group_by.func !== 'raw' ? 0 : -1));
+        : new Date(startHistory.getTime() 
+            + (this._config.group_by.func !== 'raw' ? 0 : -1));
       const fetchEnd = end;
 
       let newStateHistory: EntityCachePoints = [];
       let updateGraphHistory = false;
 
       if (this._config.statistics) {
+
+        // console.log(start, end)
+        // console.log(fetchStart, JSON.stringify(this._config))
+        if (this._config.statistics.type === "diff") {
+          if (this._config.statistics.period === '5minute') {
+            fetchStart = new Date(fetchStart.getTime() - 450000); // 2min30s
+          } else if (!this._config.statistics?.period || this._config.statistics.period === 'hour') {
+            fetchStart = new Date(fetchStart.getTime() - 5400000); // 30min
+          } else if (this._config.statistics.period === 'day') {
+            fetchStart = new Date(fetchStart.getTime() - 100400000); // 12h
+          } else {
+            fetchStart = new Date(fetchStart.getTime() - 3888000000); // 15d
+          }
+        }
+        
         const newHistory = await this._fetchStatistics(fetchStart, fetchEnd, this._config.statistics.period);
         if (newHistory && newHistory.length > 0) {
           updateGraphHistory = true;
@@ -264,11 +280,17 @@ export default class GraphEntry {
           }
           newStateHistory = newHistory.map((item) => {
             let stateParsed: number | null = null;
-            [lastNonNull, stateParsed] = this._transformAndFill(
-              item[this._config.statistics?.type || DEFAULT_STATISTICS_TYPE],
-              item,
-              lastNonNull,
-            );
+            if (this._config.statistics?.type === "diff") {
+              stateParsed = (item["sum"]  ?? 0) - (lastNonNull ?? 0);
+              lastNonNull = item["sum"]
+              // console.log(new Date(item.start), item["sum"], lastNonNull, stateParsed)
+            } else {
+              [lastNonNull, stateParsed] = this._transformAndFill(
+                item[this._config.statistics?.type || DEFAULT_STATISTICS_TYPE],
+                item,
+                lastNonNull,
+              );
+            }
 
             let displayDate: Date | null = null;
             const startDate = new Date(item.start);
