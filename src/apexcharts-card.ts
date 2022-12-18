@@ -945,6 +945,9 @@ class ChartsCard extends LitElement {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const currentMax = (this._apexChart as any).axes?.w?.globals?.maxX;
       this._headerState = [...this._headerState];
+      
+      console.log(graphData)
+      
       this._apexChart?.updateOptions(
         graphData,
         false,
