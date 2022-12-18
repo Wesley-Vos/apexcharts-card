@@ -757,14 +757,13 @@ class ChartsCard extends LitElement {
       const graph = this.shadowRoot.querySelector('#graph');
       const layout = getLayoutConfig(this._config, this._hass, this._graphs);
       
-      console.log(layout);
-      
       if (this._config.series_in_brush.length) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (layout as any).chart.id = Math.random().toString(36).substring(7);
       }
       this._apexChart = new ApexCharts(graph, layout);
       this._apexChart.render();
+      console.log(this._apexChart);
       if (this._config.series_in_brush.length) {
         const brush = this.shadowRoot.querySelector('#brush');
         this._apexBrush = new ApexCharts(
@@ -946,13 +945,12 @@ class ChartsCard extends LitElement {
       const currentMax = (this._apexChart as any).axes?.w?.globals?.maxX;
       this._headerState = [...this._headerState];
       
-      console.log(graphData)
-      
       this._apexChart?.updateOptions(
         graphData,
         false,
         TIMESERIES_TYPES.includes(this._config.chart_type) ? false : true,
       );
+      console.log(this._apexChart)
       if (this._apexBrush) {
         const newMin = start.getTime();
         const newMax = this._findEndOfChart(end, false);
