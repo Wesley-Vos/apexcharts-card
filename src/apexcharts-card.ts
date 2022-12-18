@@ -756,6 +756,9 @@ class ChartsCard extends LitElement {
       this._loaded = true;
       const graph = this.shadowRoot.querySelector('#graph');
       const layout = getLayoutConfig(this._config, this._hass, this._graphs);
+      
+      console.log(layout);
+      
       if (this._config.series_in_brush.length) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (layout as any).chart.id = Math.random().toString(36).substring(7);
