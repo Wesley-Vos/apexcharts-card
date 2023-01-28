@@ -763,7 +763,7 @@ class ChartsCard extends LitElement {
       }
       this._apexChart = new ApexCharts(graph, layout);
       this._apexChart.render();
-      console.log(this._apexChart);
+      // console.log(this._apexChart);
       if (this._config.series_in_brush.length) {
         const brush = this.shadowRoot.querySelector('#brush');
         this._apexBrush = new ApexCharts(
@@ -950,7 +950,7 @@ class ChartsCard extends LitElement {
         false,
         TIMESERIES_TYPES.includes(this._config.chart_type) ? false : true,
       );
-      console.log(this._apexChart)
+      // console.log(this._apexChart)
       if (this._apexBrush) {
         const newMin = start.getTime();
         const newMax = this._findEndOfChart(end, false);
